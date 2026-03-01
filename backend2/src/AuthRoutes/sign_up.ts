@@ -45,8 +45,8 @@ class SignUpFlow {
       res.cookie("CampusHub7U4D_Host_AccessToken", accessToken, {
         httpOnly: true,
         maxAge: 60 * 1000 * 5,
-        secure: true, // only over HTTPS sameSite: "strict", // prevents CSRF
-        sameSite: "strict",
+        secure: true, // only over HTTPS sameSite: "none", // prevents CSRF
+        sameSite: "none",
       });
       res.status(200).json({ message: "OTP created" });
     } catch (error) {

@@ -85,14 +85,14 @@ class LoginFlow {
           httpOnly: true,
           maxAge: duration2,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
 
         res.cookie("user_1UA_XG", email, {
           httpOnly: true,
           maxAge: duration,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
 
         // sending refresh token as cookie
@@ -100,7 +100,7 @@ class LoginFlow {
           httpOnly: true,
           maxAge: duration,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
 
         // sending device Id as cookie
@@ -108,7 +108,7 @@ class LoginFlow {
           httpOnly: true,
           maxAge: duration,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
         res.status(200).json({ user: email.split("@")[0], success: true });
       }
