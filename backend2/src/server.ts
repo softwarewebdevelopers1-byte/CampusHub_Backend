@@ -43,9 +43,9 @@ App.use(
   cors({
     origin: [
       "https://campushub-mq9h.onrender.com",
-      "https://campus-hub-frontend-five.vercel.app",
+      "https://campus-hub-frontend-lime.vercel.app",
       "http://localhost:5173",
-      "http://localhost:5500"
+      "http://localhost:5500",
     ],
     allowedHeaders: ["authorization", "Content-Type"],
     credentials: true,
