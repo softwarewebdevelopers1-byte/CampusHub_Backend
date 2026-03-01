@@ -1,0 +1,56 @@
+{
+  "name": "backend2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ./dist/server.js",
+    "build": "tsc",
+    "dev": "tsx watch ./src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongoose": "^5.11.96",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^25.2.1",
+    "@types/pdf-parse": "^1.1.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@supabase/storage-js": "^2.97.0",
+    "axios": "^1.13.4",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "groq-sdk": "^0.37.0",
+    "jsonwebtoken": "^9.0.3",
+    "module-alias": "^2.3.4",
+    "mongoose": "^9.1.6",
+    "multer": "^2.0.2",
+    "pdf-parse": "^2.4.5",
+    "uuid": "^13.0.0"
+  },
+  "imports": {
+    "#DatabaseConnectionModule/*": "./dist/DatabaseRoutes/*.js",
+    "#Verification/*": "./dist/Auth/*.js",
+    "#models/*": "./dist/models/*.js",
+    "#authentication/*": "./dist/AuthRoutes/*.js",
+    "#PdfResources/*": "./dist/Resources/*.js",
+    "#JwtPayloadInterface/*": "./dist/types/*.js",
+    "#adminResources/*": "./dist/Admin_Resources/*.js"
+  }
+}
