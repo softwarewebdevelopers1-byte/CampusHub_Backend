@@ -29,6 +29,7 @@ import {
 import { UserUploadRouter } from "#PdfResources/USER.UPLOAD";
 import { deepSearchRouter } from "#PdfResources/deepSearch.user";
 import { usersGetOwnPDF } from "#PdfResources/users.getPDF";
+import { simpleSearchRoute } from "#PdfResources/simple.search";
 // import { globaLimit } from "#Verification/rate.limit";
 dotenv.config();
 let PORT = Number(process.env.DEV_PORT) || Number(process.env.PORT);
@@ -78,6 +79,7 @@ App.use("/api/admin/send/notifications", AdminNotificationRouter);
 App.use("/api/resources/upload/users/data/pdf", UserUploadRouter);
 // getting pdf
 App.use("/api/resources/get/pdf/users", deepSearchRouter);
+App.use("/api/resources/pdf/users/simple/search", simpleSearchRoute);
 App.use("/api/users/get/own/pdfs", usersGetOwnPDF);
 App.use(
   (err: unknown, req: Request, res: Response, next: NextFunction): void => {
