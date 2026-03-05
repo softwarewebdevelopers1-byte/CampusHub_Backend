@@ -22,7 +22,7 @@ class SignUpFlow {
       if (userExists) {
         return res.status(409).send({ message: "email already exists" });
       }
-      let hashedPassword=bcrypt.hashSync(password,10);
+      let hashedPassword=await bcrypt.hash(password,10);
       await LecturerAcc.create({fullName:fullName, email:email, password:hashedPassword});
       res.status(200).json({ message: "Account created successfully" });
       // if user doesn't exist an otp is generated
