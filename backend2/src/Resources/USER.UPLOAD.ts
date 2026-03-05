@@ -102,7 +102,6 @@ UserUploadRouter.post(
         try {
           await unlink(filePath);
         } catch (cleanupErr) {
-          console.error("Failed to unlink file:", cleanupErr);
         }
       }
     }
