@@ -1,4 +1,5 @@
 import { LecturerAcc } from "#models/user.model";
+import bcrypt from "bcrypt";
 import type { Response, Request } from "express";
 import { Router } from "express";
 let LecturerCreateAccount = Router();
@@ -21,7 +22,8 @@ class SignUpFlow {
       if (userExists) {
         return res.status(409).send({ message: "email already exists" });
       }
-      await LecturerAcc.create({fullName:fullName, email:email, password:password});
+      let hashedPassword=bcrypt.hashSync(password,10);
+      await LecturerAcc.create({fullName:fullName, email:email, password:hashedPassword});
       res.status(200).json({ message: "Account created successfully" });
       // if user doesn't exist an otp is generated
     } catch (error) {
