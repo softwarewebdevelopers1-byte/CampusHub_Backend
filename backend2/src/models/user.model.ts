@@ -1,7 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import type { Model } from "mongoose";
 // INTERFACE FOR USER
 interface User {
+  email: string;
+  password: string;
+  role: string;
+  status: string;
+  account_state: string;
+  expiresAt?: Date;
+}
+// Interface for lecturers
+interface Lecturer {
+  fullName: string;
   email: string;
   password: string;
   role: string;
@@ -32,6 +42,15 @@ const userSchema = new mongoose.Schema<User>({
   expiresAt: { type: Date },
 });
 userSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+// LECTURER SCHEMA
+const LecturerSchema = new Schema<Lecturer>({
+  fullName: { type: String, required: true },
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+  role: { type: String, default: "Lecturer" },
+  status: { type: String, default: "Active" },
+  account_state: { type: String, default: "Active" },
+});
 // ADMIN SCHEMA
 const AdminSchema = new mongoose.Schema<Admin>({
   email: { type: String, required: true },
@@ -49,6 +68,10 @@ const otpSchema = new mongoose.Schema<OTP>({
 export const User =
   (mongoose.models.user as Model<User>) ||
   mongoose.model<User>("user", userSchema);
+// LECTURER'S MODEL
+export const LecturerAcc =
+  (mongoose.models.lecturer as Model<Lecturer>) ||
+  mongoose.model<Lecturer>("lecturer", LecturerSchema);
 // ADMIN MODEL
 export const Admin =
   (mongoose.models.admin as Model<Admin>) ||

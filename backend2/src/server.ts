@@ -46,7 +46,7 @@ App.use(
       "https://campushub-mq9h.onrender.com",
       "https://campus-hub-frontend-lime.vercel.app",
       "http://localhost:5173",
-      "http://localhost:5502",
+      "http://localhost:5500",
     ],
     
     allowedHeaders: ["authorization", "Content-Type"],
