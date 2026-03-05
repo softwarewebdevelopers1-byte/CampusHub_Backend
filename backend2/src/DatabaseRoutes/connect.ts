@@ -1,6 +1,6 @@
 import { connect } from "mongoose";
 export function DataBaseConnection() {
-  let ConnectionString = process.env.MONGO_URI_LOCAL;
+  let ConnectionString = process.env.MONGO_URI;
   if (ConnectionString) {
     connect(ConnectionString)
       .then(() => {
