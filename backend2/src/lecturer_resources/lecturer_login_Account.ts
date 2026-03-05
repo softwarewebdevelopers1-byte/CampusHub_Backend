@@ -1,6 +1,6 @@
 import type { Response, Request } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { LecturerAcc, User } from "#models/user.model";
+import { LecturerAcc } from "#models/user.model";
 import { compare, hash } from "bcrypt";
 import { Router } from "express";
 import { loginLimit } from "#Verification/rate.limit";
@@ -69,7 +69,7 @@ class LecturerLoginFlow {
           refreshToken: HashedRefreshToken,
           deviceId: DeviceId,
         });
-        await User.findOneAndUpdate(
+        await LecturerAcc.findOneAndUpdate(
           { email: email },
           { $set: { status: "Active" } },
           {
