@@ -31,6 +31,7 @@ import { deepSearchRouter } from "#PdfResources/deepSearch.user";
 import { usersGetOwnPDF } from "#PdfResources/users.getPDF";
 import { simpleSearchRoute } from "#PdfResources/simple.search";
 import { LecturerCreateAccount } from "./lecturer_resources/Lecture_create_Account.js";
+import { LecturerLoginRoute } from "./lecturer_resources/lecturer_login_Account.js";
 // import { globaLimit } from "#Verification/rate.limit";
 dotenv.config();
 let PORT = Number(process.env.DEV_PORT) || Number(process.env.PORT);
@@ -49,7 +50,7 @@ App.use(
       "http://localhost:5173",
       "http://localhost:5500",
     ],
-    
+
     allowedHeaders: ["authorization", "Content-Type"],
     credentials: true,
   }),
@@ -70,6 +71,9 @@ App.use("/auth/logout/admin/logout", AdminLogOut);
 App.use("/auth/check/admin/logged", IsAdminLogged);
 App.use("/auth/all/admin/logout/all", AdminLogOutAll);
 App.use("/auth/verify/admin", LogAdminRouter);
+// lecturer routes
+// lecturer login route
+App.use("/auth/lecturer/login/account",LecturerLoginRoute);
 // lecturer create account route
 App.use("/auth/lecturer/create/account", LecturerCreateAccount);
 // router for getting number of users in the database
