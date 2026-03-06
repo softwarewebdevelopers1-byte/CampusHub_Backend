@@ -6,7 +6,7 @@ let IsLecturerLogged = Router();
 IsLecturerLogged.get(
   "/",
   async (req: Request, res: Response): Promise<void> => {
-    const deviceId = req.cookies?.CampusHub7U4D_lecturer_Host_AccessToken;
+    const deviceId = req.cookies?.CampusHub7U4D_lecturer_Host_DeviceId;
     const UserEmail = req.cookies?.CampusHub7U4D_lecturer_1UA_XG;
     const RefreshToken =
       req.cookies?.CampusHub7U4D_lecturer_3ga_auth_RefreshToken;

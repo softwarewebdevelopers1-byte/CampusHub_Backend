@@ -50,10 +50,10 @@ class LecturerLoginFlow {
       }
       if (user && matching) {
         // clear existing cookies
-        res.clearCookie("CampusHub7U4D_Lecturer_Host_AccessToken");
-        res.clearCookie("CampusHub_Lecturer_3ga_auth_RefreshToken");
-        res.clearCookie("Host_Lecturer_AU1_Auth_2Wa__DeviceId");
-        res.clearCookie("lecturer_1UA_XG");
+        res.clearCookie("CampusHub7U4D_lecturer_Host_AccessToken");
+        res.clearCookie("CampusHub7U4D_lecturer_3ga_auth_RefreshToken");
+        res.clearCookie("CampusHub7U4D_lecturer_Host_DeviceId");
+        res.clearCookie("CampusHub7U4D_lecturer_1UA_XG");
         //
         let AccessToken = generateAccessToken(req);
         // duration for refresh token
