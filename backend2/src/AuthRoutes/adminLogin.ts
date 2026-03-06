@@ -95,7 +95,7 @@ class LoginFlow {
         res.status(200).json({
           user: `${email.split("@")[0]?.slice(0, 3)}*****${email.split("@")[1]?.split(".")[0]}`,
           success: true, /// <reference path="" />
-          role: user.role,
+          role: user.role || "None",
         });
       }
     } catch (err) {
