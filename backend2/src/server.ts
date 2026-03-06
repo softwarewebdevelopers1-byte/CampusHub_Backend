@@ -33,6 +33,7 @@ import { simpleSearchRoute } from "#PdfResources/simple.search";
 import { LecturerCreateAccount } from "./lecturer_resources/Lecture_create_Account.js";
 import { LecturerLoginRoute } from "./lecturer_resources/lecturer_login_Account.js";
 import { GetLecturers, LecturerNumber } from "#adminResources/getLec";
+import IsLecturerLogged from "#authentication/is_lecturer_logged";
 // import { globaLimit } from "#Verification/rate.limit";
 dotenv.config();
 let PORT = Number(process.env.DEV_PORT) || Number(process.env.PORT);
@@ -73,12 +74,14 @@ App.use("/auth/check/admin/logged", IsAdminLogged);
 App.use("/auth/all/admin/logout/all", AdminLogOutAll);
 App.use("/auth/verify/admin", LogAdminRouter);
 // lecturer routes
+// checking if lecturer is logged in
+App.use("/auth/lecturer/check/logged", IsLecturerLogged);
 // lecturer number
-App.use("/auth/lecturer/get/number",LecturerNumber)
+App.use("/auth/lecturer/get/number", LecturerNumber);
 // lecturer accounts
-App.use("/auth/lecturer/get/accounts",GetLecturers)
+App.use("/auth/lecturer/get/accounts", GetLecturers);
 // lecturer login route
-App.use("/auth/lecturer/login/account",LecturerLoginRoute);
+App.use("/auth/lecturer/login/account", LecturerLoginRoute);
 // lecturer create account route
 App.use("/auth/lecturer/create/account", LecturerCreateAccount);
 // router for getting number of users in the database

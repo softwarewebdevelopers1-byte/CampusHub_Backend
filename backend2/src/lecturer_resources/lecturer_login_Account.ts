@@ -81,14 +81,14 @@ class LecturerLoginFlow {
         // sending access token as cookie
 
         // access token uses shorter maxAge
-        res.cookie("CampusHub7U4D_Host_AccessToken", AccessToken, {
+        res.cookie("CampusHub7U4D_lecturer_Host_AccessToken", AccessToken, {
           httpOnly: true,
           maxAge: duration2,
           secure: true,
           sameSite: "none",
         });
 
-        res.cookie("user_1UA_XG", email, {
+        res.cookie("CampusHub7U4D_lecturer_1UA_XG", email, {
           httpOnly: true,
           maxAge: duration,
           secure: true,
@@ -96,7 +96,7 @@ class LecturerLoginFlow {
         });
 
         // sending refresh token as cookie
-        res.cookie("CampusHub_3ga_auth_RefreshToken", RefreshTokenAccess, {
+        res.cookie("CampusHub7U4D_lecturer_3ga_auth_RefreshToken", RefreshTokenAccess, {
           httpOnly: true,
           maxAge: duration,
           secure: true,
@@ -104,7 +104,7 @@ class LecturerLoginFlow {
         });
 
         // sending device Id as cookie
-        res.cookie("Host_AU1_Auth_2Wa__DeviceId", DeviceId, {
+        res.cookie("CampusHub7U4D_lecturer_Host_DeviceId", DeviceId, {
           httpOnly: true,
           maxAge: duration,
           secure: true,
