@@ -31,7 +31,7 @@ class LoginFlow {
         });
         return;
       }
-      let user = await Admin.findOne({ email: email } );
+      let user = await Admin.findOne({ email: email });
       if (!user) {
         res
           .status(401)
@@ -92,12 +92,11 @@ class LoginFlow {
           secure: true,
           sameSite: "strict",
         });
-        res
-          .status(200)
-          .json({
-            user: `${email.split("@")[0]?.slice(0, 3)}*****${email.split("@")[1]?.split(".")[0]}`,
-            success: true,
-          });
+        res.status(200).json({
+          user: `${email.split("@")[0]?.slice(0, 3)}*****${email.split("@")[1]?.split(".")[0]}`,
+          success: true, /// <reference path="" />
+          role: user.role,
+        });
       }
     } catch (err) {
       res.status(500).json({ error: err });
