@@ -110,7 +110,9 @@ class LecturerLoginFlow {
           secure: true,
           sameSite: "none",
         });
-        res.status(200).json({ user: email.split("@")[0], success: true });
+        res
+          .status(200)
+          .json({ user: email.split("@")[0], success: true, role: user.role });
       }
     } catch (err) {
       res.status(500).json({ error: err });
