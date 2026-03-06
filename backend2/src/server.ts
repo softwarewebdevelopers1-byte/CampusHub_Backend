@@ -32,7 +32,7 @@ import { usersGetOwnPDF } from "#PdfResources/users.getPDF";
 import { simpleSearchRoute } from "#PdfResources/simple.search";
 import { LecturerCreateAccount } from "./lecturer_resources/Lecture_create_Account.js";
 import { LecturerLoginRoute } from "./lecturer_resources/lecturer_login_Account.js";
-import { GetLecturers } from "#adminResources/getLec";
+import { GetLecturers, LecturerNumber } from "#adminResources/getLec";
 // import { globaLimit } from "#Verification/rate.limit";
 dotenv.config();
 let PORT = Number(process.env.DEV_PORT) || Number(process.env.PORT);
@@ -73,6 +73,8 @@ App.use("/auth/check/admin/logged", IsAdminLogged);
 App.use("/auth/all/admin/logout/all", AdminLogOutAll);
 App.use("/auth/verify/admin", LogAdminRouter);
 // lecturer routes
+// lecturer number
+App.use("/auth/lecturer/get/number",LecturerNumber)
 // lecturer accounts
 App.use("/auth/lecturer/get/accounts",GetLecturers)
 // lecturer login route

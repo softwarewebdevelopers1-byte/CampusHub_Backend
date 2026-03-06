@@ -4,7 +4,7 @@ import { Router } from "express";
 import type { Response, Request } from "express";
 
 export let GetLecturers = Router();
-export let UserNumber = Router();
+export let LecturerNumber = Router();
 GetLecturers.get(
   "/",
   authenticateAdmin,
@@ -25,7 +25,7 @@ GetLecturers.get(
     }
   },
 );
-UserNumber.get("/", async (req: Request, res: Response): Promise<void> => {
+LecturerNumber.get("/", async (req: Request, res: Response): Promise<void> => {
   try {
     let count = await User.countDocuments({}    );
     res.status(200).json({ count });
