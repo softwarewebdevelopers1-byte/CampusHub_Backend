@@ -17,6 +17,12 @@ interface LoginFace {
 }
 // login class flow
 class LoginFlow {
+  private password: string;
+  private email: string;
+  constructor() {
+    this.password = "";
+    this.email = "";
+  }
   Login = async (req: Request, res: Response): Promise<void> => {
     try {
       if (!req.body) {
@@ -31,7 +37,9 @@ class LoginFlow {
         });
         return;
       }
-      let user = await Admin.findOne({ email: email });
+      this.email = email;
+      this.password = password;
+      let user = await Admin.findOne({ email: this.email });
       if (!user) {
         res
           .status(401)
@@ -39,7 +47,7 @@ class LoginFlow {
         return;
       }
 
-      let matching = await compare(password, user.password);
+      let matching = await compare(this.password, user.password);
       if (!matching) {
         res.status(401).json({ message: "Invalid password", success: false });
         return;
@@ -94,7 +102,7 @@ class LoginFlow {
         });
         res.status(200).json({
           user: `${email.split("@")[0]?.slice(0, 3)}*****${email.split("@")[1]?.split(".")[0]}`,
-          success: true, /// <reference path="" />
+          success: true,
           role: user.role || "None",
         });
       }
