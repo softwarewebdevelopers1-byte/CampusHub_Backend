@@ -34,6 +34,7 @@ import { LecturerCreateAccount } from "./lecturer_resources/Lecture_create_Accou
 import { LecturerLoginRoute } from "./lecturer_resources/lecturer_login_Account.js";
 import { GetLecturers, LecturerNumber } from "#adminResources/getLec";
 import IsLecturerLogged from "#authentication/is_lecturer_logged";
+import LecturerLogout from "./lecturer_resources/lecturer.logout.js";
 // import { globaLimit } from "#Verification/rate.limit";
 dotenv.config();
 let PORT = Number(process.env.DEV_PORT) || Number(process.env.PORT);
@@ -74,6 +75,8 @@ App.use("/auth/check/admin/logged", IsAdminLogged);
 App.use("/auth/all/admin/logout/all", AdminLogOutAll);
 App.use("/auth/verify/admin", LogAdminRouter);
 // lecturer routes
+// lecturer logout route
+App.use("/auth/lecturer/logout", LecturerLogout);
 // checking if lecturer is logged in
 App.use("/auth/lecturer/check/logged", IsLecturerLogged);
 // lecturer number
