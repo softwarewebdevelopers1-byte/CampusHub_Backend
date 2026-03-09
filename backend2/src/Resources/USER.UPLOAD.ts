@@ -29,7 +29,8 @@ UserUploadRouter.post(
   "/",
   uploads.single("file"),
   async (req: Request, res: Response, nxt: NextFunction): Promise<void> => {
-    const usersEmail = req.cookies.user_1UA_XG;
+    const usersEmail =
+      req.cookies.user_1UA_XG || req.cookies.CampusHub7U4D_lecturer_1UA_XG;
     const { courseTitle, unitName, unitCode } = req.body;
     const filePath = req.file?.path; // path on disk
 
@@ -101,8 +102,7 @@ UserUploadRouter.post(
       if (filePath) {
         try {
           await unlink(filePath);
-        } catch (cleanupErr) {
-        }
+        } catch (cleanupErr) {}
       }
     }
   },

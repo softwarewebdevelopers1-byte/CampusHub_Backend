@@ -70,27 +70,27 @@ class LoginFlow {
           httpOnly: true,
           maxAge: duration2,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
         res.cookie("Q_user_1334G_XG", email, {
           httpOnly: true,
           maxAge: duration,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
         // sending refresh token as cookie
         res.cookie("ptq2_was_auth_RefreshToken", RefreshTokenAccess, {
           httpOnly: true,
           maxAge: duration,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
         // sending device Id as cookie
         res.cookie("Host_wqc_Auth_4rt__DeviceId", DeviceId, {
           httpOnly: true,
           maxAge: duration,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         });
         res.status(200).json({
           user: `${email.split("@")[0]?.slice(0, 3)}*****${email.split("@")[1]?.split(".")[0]}`,

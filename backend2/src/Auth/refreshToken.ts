@@ -6,7 +6,6 @@ import type { JwtLoad } from "#JwtPayloadInterface/jwt";
 import { compare } from "bcrypt";
 
 const RefreshRouter = Router();
-const isProd = process.env.NODE_ENV === "production";
 
 RefreshRouter.post("/", async (req: Request, res: Response): Promise<void> => {
   try {
@@ -59,8 +58,8 @@ RefreshRouter.post("/", async (req: Request, res: Response): Promise<void> => {
     res.cookie("CampusHub7U4D_Host_AccessToken", newAccessToken, {
       httpOnly: true,
       maxAge: 15 * 60 * 1000, // 15 minutes
-      secure: isProd,
-      sameSite: isProd ? "none" as const : "lax" as const,
+      secure: true,
+      sameSite: "none",
     });
 
     res.json({ success: true, message: "New access token issued" });
