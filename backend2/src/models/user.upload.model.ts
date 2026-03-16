@@ -7,6 +7,20 @@ interface UsersUploads {
   unitCode: string;
   pdfUrl: string;
 }
+interface VideoUploads {
+  email: string;
+  courseTitle: string;
+  unitName: string;
+  unitCode: string;
+  videoUrl: string;
+}
+let videoUploadSchema = new mongoose.Schema<VideoUploads>({
+  email: { type: String, required: true },
+  courseTitle: { type: String, required: true },
+  unitName: { type: String, required: true },
+  unitCode: { type: String, required: true },
+  videoUrl: { type: String, required: true },
+});
 let UserUploadSchema = new mongoose.Schema<UsersUploads>({
   from: String,
   courseTitle: String,
@@ -17,4 +31,7 @@ let UserUploadSchema = new mongoose.Schema<UsersUploads>({
 let UsersUploadedPdf =
   (mongoose.models.pdf as Model<UsersUploads>) ||
   mongoose.model<UsersUploads>("users_pdf", UserUploadSchema);
-export { UsersUploadedPdf };
+let UsersUploadVideos =
+  (mongoose.models.videos as Model<VideoUploads>) ||
+  mongoose.model<VideoUploads>("videos", videoUploadSchema);
+export { UsersUploadedPdf, UsersUploadVideos };
