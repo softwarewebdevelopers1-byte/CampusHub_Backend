@@ -36,6 +36,7 @@ import { GetLecturers, LecturerNumber } from "#adminResources/getLec";
 import IsLecturerLogged from "#authentication/is_lecturer_logged";
 import LecturerLogout from "./lecturer_resources/lecturer.logout.js";
 import VideoUploadRouter from "#PdfResources/upload.video";
+import { VideosGetRoute } from "#PdfResources/get.videos";
 // import { globaLimit } from "#Verification/rate.limit";
 dotenv.config();
 let PORT = Number(process.env.DEV_PORT) || Number(process.env.PORT);
@@ -95,6 +96,8 @@ App.use("/api/public/notifications", NotificationRouter);
 App.use("/api/admin/delete/notification", AdminDeleteNotificationRouter);
 App.use("/api/admin/get/notifications", AdminGetNotificationRouter);
 App.use("/api/admin/send/notifications", AdminNotificationRouter);
+// getting video route
+App.use("/api/get/lecturer/videos", VideosGetRoute);
 // upload video route
 App.use("/api/users/upload/video", VideoUploadRouter);
 // uploading pdf
