@@ -5,19 +5,18 @@ export let VideosGetRoute = Router();
 
 VideosGetRoute.post("/", async (req: Request, res: Response): Promise<void> => {
   try {
-    const { searchTerm } = req.body;
+    let { searchTerm } = req.body;
 
     if (!searchTerm || searchTerm.trim() === "") {
       res.status(400).json({ message: "Search term is required" });
       return;
     }
-
+    searchTerm = searchTerm.split(" ");
+    const unitNameRegexArray = searchTerm.map((word: string) => ({
+      unitName: { $regex: word, $options: "i" },
+    }));
     const query = {
-      $or: [
-        { courseTitle: { $regex: searchTerm, $options: "i" } },
-        { unitName: { $regex: searchTerm, $options: "i" } },
-        { unitCode: { $regex: searchTerm, $options: "i" } },
-      ],
+      $or: unitNameRegexArray,
     };
 
     const videos = await UsersUploadVideos.find(query).limit(5);
