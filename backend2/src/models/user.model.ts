@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import type { Model } from "mongoose";
 // INTERFACE FOR USER
 interface User {
+  userName: string;
   email: string;
   password: string;
   role: string;
@@ -34,6 +35,7 @@ interface OTP {
 }
 //  USER SCHEMA
 const userSchema = new mongoose.Schema<User>({
+  userName: { type: String, default: "Student" },
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   role: { type: String, default: "Student" },
