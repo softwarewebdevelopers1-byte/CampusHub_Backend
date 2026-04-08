@@ -8,10 +8,10 @@ import { PDFParse } from "pdf-parse";
 import { existsSync, mkdirSync } from "fs";
 import { GenerateOTP } from "#Verification/OTP.verify";
 
-
 let pdfRouter = Router();
 let apiKey = process.env.API_KEY;
 if (!apiKey) throw new Error("Invalid API Key");
+const MAX_PROMPT_CHARS = 12000;
 let folderPath = path.resolve("./campusHub_AI_uploads");
 if (!existsSync(folderPath)) {
   mkdirSync(folderPath, { recursive: true });
@@ -50,18 +50,33 @@ pdfRouter.post(
       }
       let parser = new PDFParse({ url: req.file.path });
       let results = parser.getText();
-      let finalResult = (await results).text;
+      let finalResult = (await results).text.replace(/\s+/g, " ").trim();
+      if (!finalResult) {
+        await parser.destroy();
+        return res.status(400).json({ error: "Unable to extract text from PDF" });
+      }
+
+      const wasTrimmed = finalResult.length > MAX_PROMPT_CHARS;
+      const safeExcerpt = wasTrimmed
+        ? `${finalResult.slice(0, MAX_PROMPT_CHARS)}...`
+        : finalResult;
+
       const groq = new Groq({ apiKey });
       const chatCompletion = await groq.chat.completions.create({
         messages: [
           {
+            role: "system",
+            content:
+              "You summarize academic PDFs clearly and concisely. If the input is truncated, say so briefly and summarize only the provided excerpt.",
+          },
+          {
             role: "user",
-            content: `Give me a detailed summary of this text:\n${finalResult}`,
+            content: `Summarize the following PDF text in clear sections.\nFocus on the key ideas, important findings, and practical takeaways.\n${wasTrimmed ? "The text was truncated to fit the model input limit, so mention that briefly in the summary.\n" : ""}\nPDF text:\n${safeExcerpt}`,
           },
         ],
         model: "openai/gpt-oss-20b",
-        temperature: 1,
-        max_completion_tokens: 8192,
+        temperature: 0.5,
+        max_completion_tokens: 900,
         stream: true,
       });
       let fullAI = "";
@@ -69,10 +84,15 @@ pdfRouter.post(
         const piece = chunk.choices[0]?.delta?.content;
         if (piece) fullAI += piece;
       }
-      res.json({ data2: fullAI });
+      res.json({
+        data2: fullAI,
+        truncated: wasTrimmed,
+        extractedCharacters: finalResult.length,
+        summarizedCharacters: safeExcerpt.length,
+      });
       await parser.destroy();
     } catch (err) {
-      console.log(err)
+      console.log(err);
       res.status(500).json({ error: "Server error" });
     } finally {
       if (PdfFilePath) {
