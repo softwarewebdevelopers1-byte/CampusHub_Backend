@@ -2,7 +2,10 @@ import { Router } from "express";
 import type { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { authenticateAdmin } from "#Verification/access.token";
-import { Admin, LecturerAcc, User } from "#models/user.model";
+import { Admin, LecturerAcc, OTP, User } from "#models/user.model";
+import { AdminRefreshToken, RefreshToken } from "#models/token.model";
+import { UsersUploadedPdf, UsersUploadVideos } from "#models/user.upload.model";
+import notifications from "#models/notifications.model";
 
 type SupportedRole = "Student" | "Lecturer" | "Admin";
 
@@ -297,6 +300,63 @@ AdminUserManagementRouter.patch(
       });
     } catch (error) {
       res.status(500).json({ error: "Unable to update user" });
+    }
+  },
+);
+
+AdminUserManagementRouter.delete(
+  "/",
+  authenticateAdmin,
+  async (req: Request, res: Response): Promise<void> => {
+    const { email, role } = req.body as {
+      email?: string;
+      role?: SupportedRole;
+    };
+
+    if (!email || !role) {
+      res.status(400).json({ error: "Email and role are required" });
+      return;
+    }
+
+    if (!["Student", "Lecturer", "Admin"].includes(role)) {
+      res.status(400).json({ error: "Unsupported role" });
+      return;
+    }
+
+    try {
+      let deletedUser = null;
+
+      if (role === "Student") {
+        deletedUser = await User.findOneAndDelete({ email }).lean().exec();
+      } else if (role === "Lecturer") {
+        deletedUser = await LecturerAcc.findOneAndDelete({ email })
+          .lean()
+          .exec();
+      } else {
+        deletedUser = await Admin.findOneAndDelete({ email }).lean().exec();
+      }
+
+      if (!deletedUser) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      await Promise.all([
+        RefreshToken.deleteMany({ email }),
+        AdminRefreshToken.deleteMany({ email }),
+        OTP.deleteMany({ email }),
+        UsersUploadedPdf.deleteMany({ from: email }),
+        UsersUploadVideos.deleteMany({ email }),
+        role === "Admin"
+          ? notifications.deleteMany({ from: `Admin ${email}` })
+          : Promise.resolve(),
+      ]);
+
+      res.status(200).json({
+        message: "User and related content deleted successfully",
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Unable to delete user" });
     }
   },
 );
