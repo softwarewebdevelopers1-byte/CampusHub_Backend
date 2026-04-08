@@ -25,6 +25,7 @@ import {
   AdminNotificationRouter,
   NotificationRouter,
 } from "#adminResources/public_notifications";
+import { AdminUserManagementRouter } from "#adminResources/manage_users";
 // users uploads
 import { UserUploadRouter } from "#PdfResources/USER.UPLOAD";
 import { deepSearchRouter } from "#PdfResources/deepSearch.user";
@@ -72,6 +73,7 @@ App.use("/auth/check/logged", IsLoggedRoute);
 App.use("/api/resource/pdf", pdfRouter);
 App.use("/auth/verify-otp", OTPRouter);
 App.use("/auth/find/users", GetUsers);
+App.use("/api/admin/users", AdminUserManagementRouter);
 App.use("/auth/logout/admin/logout", AdminLogOut);
 App.use("/auth/check/admin/logged", IsAdminLogged);
 App.use("/auth/all/admin/logout/all", AdminLogOutAll);

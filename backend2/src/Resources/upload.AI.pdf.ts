@@ -72,6 +72,7 @@ pdfRouter.post(
       res.json({ data2: fullAI });
       await parser.destroy();
     } catch (err) {
+      console.log(err)
       res.status(500).json({ error: "Server error" });
     } finally {
       if (PdfFilePath) {
