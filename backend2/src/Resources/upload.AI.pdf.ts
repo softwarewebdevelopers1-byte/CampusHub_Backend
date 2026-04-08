@@ -37,6 +37,26 @@ const uploads = multer({
     }
   },
 });
+
+async function streamGroqResponse(messages: { role: "system" | "user"; content: string }[]) {
+  const groq = new Groq({ apiKey });
+  const chatCompletion = await groq.chat.completions.create({
+    messages,
+    model: "openai/gpt-oss-20b",
+    temperature: 0.5,
+    max_completion_tokens: 900,
+    stream: true,
+  });
+
+  let fullAI = "";
+  for await (const chunk of chatCompletion) {
+    const piece = chunk.choices[0]?.delta?.content;
+    if (piece) fullAI += piece;
+  }
+
+  return fullAI;
+}
+
 pdfRouter.post(
   "/",
   uploads.single("file"),
@@ -61,29 +81,17 @@ pdfRouter.post(
         ? `${finalResult.slice(0, MAX_PROMPT_CHARS)}...`
         : finalResult;
 
-      const groq = new Groq({ apiKey });
-      const chatCompletion = await groq.chat.completions.create({
-        messages: [
-          {
-            role: "system",
-            content:
-              "You summarize academic PDFs clearly and concisely. If the input is truncated, say so briefly and summarize only the provided excerpt.",
-          },
-          {
-            role: "user",
-            content: `Summarize the following PDF text in clear sections.\nFocus on the key ideas, important findings, and practical takeaways.\n${wasTrimmed ? "The text was truncated to fit the model input limit, so mention that briefly in the summary.\n" : ""}\nPDF text:\n${safeExcerpt}`,
-          },
-        ],
-        model: "openai/gpt-oss-20b",
-        temperature: 0.5,
-        max_completion_tokens: 900,
-        stream: true,
-      });
-      let fullAI = "";
-      for await (const chunk of chatCompletion) {
-        const piece = chunk.choices[0]?.delta?.content;
-        if (piece) fullAI += piece;
-      }
+      const fullAI = await streamGroqResponse([
+        {
+          role: "system",
+          content:
+            "You summarize academic PDFs clearly and concisely. If the input is truncated, say so briefly and summarize only the provided excerpt.",
+        },
+        {
+          role: "user",
+          content: `Summarize the following PDF text in clear sections.\nFocus on the key ideas, important findings, and practical takeaways.\n${wasTrimmed ? "The text was truncated to fit the model input limit, so mention that briefly in the summary.\n" : ""}\nPDF text:\n${safeExcerpt}`,
+        },
+      ]);
       res.json({
         data2: fullAI,
         truncated: wasTrimmed,
@@ -105,5 +113,43 @@ pdfRouter.post(
     }
   },
 );
+
+pdfRouter.post("/ask-summary", async (req: Request, res: Response) => {
+  try {
+    const { summary, question } = req.body as {
+      summary?: string;
+      question?: string;
+    };
+
+    if (!summary || !question) {
+      res
+        .status(400)
+        .json({ error: "Summary and question are required" });
+      return;
+    }
+
+    const safeSummary =
+      summary.length > MAX_PROMPT_CHARS
+        ? `${summary.slice(0, MAX_PROMPT_CHARS)}...`
+        : summary;
+
+    const answer = await streamGroqResponse([
+      {
+        role: "system",
+        content:
+          "You answer questions only from the provided AI-generated summary. If the answer is not supported by the summary, say that clearly and do not invent details.",
+      },
+      {
+        role: "user",
+        content: `Summary:\n${safeSummary}\n\nQuestion:\n${question}\n\nAnswer the question clearly and directly using the summary above.`,
+      },
+    ]);
+
+    res.status(200).json({ answer });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Unable to answer question" });
+  }
+});
 export { pdfRouter };
 //# sourceMappingURL=upload.pdf.js.map
