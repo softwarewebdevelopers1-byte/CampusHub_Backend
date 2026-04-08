@@ -7,7 +7,7 @@ import path from "path";
 import { PDFParse } from "pdf-parse";
 import { existsSync, mkdirSync } from "fs";
 import { GenerateOTP } from "#Verification/OTP.verify";
-import { AuthenticateToken } from "#Verification/access.token";
+
 
 let pdfRouter = Router();
 let apiKey = process.env.API_KEY;
@@ -39,7 +39,6 @@ const uploads = multer({
 });
 pdfRouter.post(
   "/",
-  AuthenticateToken,
   uploads.single("file"),
   async (req: Request, res: Response) => {
     let PdfFilePath = req.file?.path;
