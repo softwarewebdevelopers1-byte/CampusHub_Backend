@@ -14,6 +14,7 @@ let logRouter = Router();
 interface LoginFace {
   email: string;
   password: string;
+  role?: string;
 }
 // login class flow
 class LoginFlow {
@@ -23,7 +24,7 @@ class LoginFlow {
         res.status(403).json({ issue: "Unauthorized access" });
         return;
       }
-      const { email, password }: LoginFace = req.body;
+      const { email, password, role }: LoginFace = req.body;
       if (!email || !password) {
         res.status(400).json({
           message: "Email and password are required ",
@@ -31,13 +32,21 @@ class LoginFlow {
         });
         return;
       }
+      if (role && role !== "Student") {
+        res.status(403).json({
+          message: "This login route is only available for student accounts",
+          success: false,
+        });
+        return;
+      }
       let user = await User.findOne({
         email: email,
         account_state: "Active",
+        role: "Student",
       });
       if (!user) {
         res.status(401).json({
-          message: "Invalid credentials or account is suspended",
+          message: "Invalid student credentials or account is suspended",
           success: false,
         });
         return;
@@ -110,7 +119,12 @@ class LoginFlow {
           secure: true,
           sameSite: "none",
         });
-        res.status(200).json({ user: email.split("@")[0], success: true });
+        res.status(200).json({
+          user: email.split("@")[0],
+          userName: user.userName || "Student",
+          role: user.role || "Student",
+          success: true,
+        });
       }
     } catch (err) {
       res.status(500).json({ error: err });

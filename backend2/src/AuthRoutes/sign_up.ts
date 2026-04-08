@@ -14,11 +14,16 @@ class SignUpFlow {
       // validating if user sends data
       if (!req.body)
         return res.status(403).json({ issue: "Unauthorized access" });
-      const { email, password } = req.body;
+      const { email, password, role } = req.body;
       if (!email || !password) {
         return res
           .status(400)
           .send({ message: "Email and password are required" });
+      }
+      if (role && role !== "Student") {
+        return res.status(403).send({
+          message: "Only student accounts can be created from this route",
+        });
       }
       // validating ig user already exists
       let userExists = await User.findOne({
