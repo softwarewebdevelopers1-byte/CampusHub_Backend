@@ -143,63 +143,30 @@ AdminUserManagementRouter.post(
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      if (role === "Student") {
-        const createdStudent = await User.create({
-          email,
-          password: hashedPassword,
-          userName: userName?.trim() || "Student",
-          role: "Student",
-          status: "Active",
-          account_state: "Active",
-        });
+      const displayName =
+        role === "Student"
+          ? userName?.trim() || "Student"
+          : role === "Lecturer"
+            ? fullName?.trim() || "Lecturer"
+            : email.split("@")[0] || "Admin";
 
-        res.status(201).json({
-          message: "Student account created successfully",
-          user: buildUserRecord({
-            email: createdStudent.email,
-            role: createdStudent.role,
-            status: createdStudent.status,
-            account_state: createdStudent.account_state,
-            userName: createdStudent.userName,
-          }),
-        });
-        return;
-      }
-
-      if (role === "Lecturer") {
-        const createdLecturer = await LecturerAcc.create({
-          email,
-          password: hashedPassword,
-          fullName: fullName?.trim() || "Lecturer",
-          role: "Lecturer",
-          status: "Active",
-          account_state: "Active",
-        });
-
-        res.status(201).json({
-          message: "Lecturer account created successfully",
-          user: buildUserRecord({
-            email: createdLecturer.email,
-            role: createdLecturer.role,
-            status: createdLecturer.status,
-            account_state: createdLecturer.account_state,
-            fullName: createdLecturer.fullName,
-          }),
-        });
-        return;
-      }
-
-      const createdAdmin = await Admin.create({
+      const createdUser = await User.create({
         email,
         password: hashedPassword,
-        role: "Admin",
+        userName: displayName,
+        role,
+        status: "Active",
+        account_state: "Active",
       });
 
       res.status(201).json({
-        message: "Admin account created successfully",
+        message: `${role} account created successfully`,
         user: buildUserRecord({
-          email: createdAdmin.email,
-          role: createdAdmin.role,
+          email: createdUser.email,
+          role: createdUser.role,
+          status: createdUser.status,
+          account_state: createdUser.account_state,
+          userName: createdUser.userName,
         }),
       });
     } catch (error) {
@@ -239,45 +206,13 @@ AdminUserManagementRouter.patch(
     }
 
     try {
-      if (role === "Student") {
-        const updatedStudent = await User.findOneAndUpdate(
-          { email },
-          {
-            $set: {
-              account_state,
-              status: account_state,
-              ...(account_state === "Active"
-                ? { role: "Student", expiresAt: null }
-                : {}),
-            },
-          },
-          {
-            new: true,
-            runValidators: true,
-            upsert: false,
-          },
-        )
-        .lean()
-        .exec();
-
-        if (!updatedStudent) {
-          res.status(404).json({ error: "User not found" });
-          return;
-        }
-
-        res.status(200).json({
-          message: `User marked as ${account_state.toLowerCase()}`,
-          user: buildUserRecord(updatedStudent),
-        });
-        return;
-      }
-
-      const updatedLecturer = await LecturerAcc.findOneAndUpdate(
+      const updatedUser = await User.findOneAndUpdate(
         { email },
         {
           $set: {
             account_state,
             status: account_state,
+            ...(account_state === "Active" ? { role, expiresAt: null } : {}),
           },
         },
         {
@@ -289,15 +224,42 @@ AdminUserManagementRouter.patch(
         .lean()
         .exec();
 
-      if (!updatedLecturer) {
-        res.status(404).json({ error: "User not found" });
+      if (updatedUser) {
+        res.status(200).json({
+          message: `User marked as ${account_state.toLowerCase()}`,
+          user: buildUserRecord(updatedUser),
+        });
         return;
       }
 
-      res.status(200).json({
-        message: `User marked as ${account_state.toLowerCase()}`,
-        user: buildUserRecord(updatedLecturer),
-      });
+      if (role === "Lecturer") {
+        const updatedLecturer = await LecturerAcc.findOneAndUpdate(
+          { email },
+          {
+            $set: {
+              account_state,
+              status: account_state,
+            },
+          },
+          {
+            new: true,
+            runValidators: true,
+            upsert: false,
+          },
+        )
+          .lean()
+          .exec();
+
+        if (updatedLecturer) {
+          res.status(200).json({
+            message: `User marked as ${account_state.toLowerCase()}`,
+            user: buildUserRecord(updatedLecturer),
+          });
+          return;
+        }
+      }
+
+      res.status(404).json({ error: "User not found" });
     } catch (error) {
       res.status(500).json({ error: "Unable to update user" });
     }
@@ -326,13 +288,13 @@ AdminUserManagementRouter.delete(
     try {
       let deletedUser = null;
 
-      if (role === "Student") {
-        deletedUser = await User.findOneAndDelete({ email }).lean().exec();
-      } else if (role === "Lecturer") {
+      deletedUser = await User.findOneAndDelete({ email }).lean().exec();
+
+      if (!deletedUser && role === "Lecturer") {
         deletedUser = await LecturerAcc.findOneAndDelete({ email })
           .lean()
           .exec();
-      } else {
+      } else if (!deletedUser && role === "Admin") {
         deletedUser = await Admin.findOneAndDelete({ email }).lean().exec();
       }
 
