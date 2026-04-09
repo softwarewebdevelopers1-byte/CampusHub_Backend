@@ -7,6 +7,7 @@ import path from "path";
 import { PDFParse } from "pdf-parse";
 import { existsSync, mkdirSync } from "fs";
 import { GenerateOTP } from "#Verification/OTP.verify";
+import { StudentAISummaryModel } from "#models/ai.summary.model";
 
 let pdfRouter = Router();
 let apiKey = process.env.API_KEY;
@@ -63,6 +64,12 @@ pdfRouter.post(
   async (req: Request, res: Response) => {
     let PdfFilePath = req.file?.path;
     try {
+      const studentEmail = req.cookies?.user_1UA_XG;
+
+      if (!studentEmail) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
       if (!req.file) {
         return res
           .status(400)
@@ -92,8 +99,20 @@ pdfRouter.post(
           content: `Summarize the following PDF text in clear sections.\nFocus on the key ideas, important findings, and practical takeaways.\n${wasTrimmed ? "The text was truncated to fit the model input limit, so mention that briefly in the summary.\n" : ""}\nPDF text:\n${safeExcerpt}`,
         },
       ]);
+
+      const historyEntry = await StudentAISummaryModel.create({
+        studentEmail,
+        fileName: req.file.originalname,
+        summaryText: fullAI,
+        truncated: wasTrimmed,
+        extractedCharacters: finalResult.length,
+        summarizedCharacters: safeExcerpt.length,
+      });
+
       res.json({
         data2: fullAI,
+        summaryId: historyEntry._id,
+        fileName: req.file.originalname,
         truncated: wasTrimmed,
         extractedCharacters: finalResult.length,
         summarizedCharacters: safeExcerpt.length,
@@ -113,6 +132,29 @@ pdfRouter.post(
     }
   },
 );
+
+pdfRouter.get("/history", async (req: Request, res: Response) => {
+  try {
+    const studentEmail = req.cookies?.user_1UA_XG;
+
+    if (!studentEmail) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const history = await StudentAISummaryModel.find({
+      studentEmail,
+    })
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
+
+    res.status(200).json({ history });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Unable to load summary history" });
+  }
+});
 
 pdfRouter.post("/ask-summary", async (req: Request, res: Response) => {
   try {
