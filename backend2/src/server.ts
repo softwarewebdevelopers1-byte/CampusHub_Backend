@@ -39,6 +39,7 @@ import LecturerLogout from "./lecturer_resources/lecturer.logout.js";
 import VideoUploadRouter from "#PdfResources/upload.video";
 import { VideosGetRoute } from "#PdfResources/get.videos";
 import { LatestUploadsRoute } from "#PdfResources/latest.uploads";
+import { StudentNavigationAIRouter } from "#PdfResources/student.ai.navigation";
 // import { globaLimit } from "#Verification/rate.limit";
 dotenv.config();
 let PORT = Number(process.env.DEV_PORT) || Number(process.env.PORT);
@@ -110,6 +111,7 @@ App.use("/api/resources/upload/users/data/pdf", UserUploadRouter);
 App.use("/api/resources/get/pdf/users", deepSearchRouter);
 App.use("/api/resources/pdf/users/simple/search", simpleSearchRoute);
 App.use("/api/users/get/own/pdfs", usersGetOwnPDF);
+App.use("/api/ai/student/navigation", StudentNavigationAIRouter);
 App.use(
   (err: unknown, req: Request, res: Response, next: NextFunction): void => {
     if (
