@@ -44,9 +44,12 @@ VideoUploadRouter.post(
   "/",
   upload.single("video"),
   async (req, res): Promise<void> => {
-    let userEmail = req.cookies?.CampusHub7U4D_lecturer_1UA_XG;
+    const userEmail =
+      req.cookies?.user_1UA_XG || req.cookies?.CampusHub7U4D_lecturer_1UA_XG;
     if (!userEmail) {
-      res.status(401).json({ message: "Email is required" });
+      res.status(401).json({
+        message: "You must be logged in to upload videos",
+      });
       return;
     }
     let filePath: string | null = null;

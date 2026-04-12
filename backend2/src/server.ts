@@ -105,6 +105,7 @@ App.use("/api/get/lecturer/videos", VideosGetRoute);
 App.use("/api/resources/latest/uploads", LatestUploadsRoute);
 // upload video route
 App.use("/api/users/upload/video", VideoUploadRouter);
+App.use("/api/students/upload/video", VideoUploadRouter);
 // uploading pdf
 App.use("/api/resources/upload/users/data/pdf", UserUploadRouter);
 // getting pdf
